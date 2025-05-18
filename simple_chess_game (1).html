@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Chess Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
+    .chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      border: 2px solid #333;
+    }
+    .square {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: grab;
+    }
+    .white {
+      background-color: #f0d9b5;
+    }
+    .black {
+      background-color: #b58863;
+    }
+  </style>
+</head>
+<body>
+  <div class="chessboard" id="chessboard"></div>
+
+  <script>
+    const board = document.getElementById('chessboard');
+    const initialPosition = [
+      ["♜","♞","♝","♛","♚","♝","♞","♜"],
+      ["♟","♟","♟","♟","♟","♟","♟","♟"],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["♙","♙","♙","♙","♙","♙","♙","♙"],
+      ["♖","♘","♗","♕","♔","♗","♘","♖"]
+    ];
+
+    let draggedPiece = null;
+    let sourceSquare = null;
+
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const square = document.createElement('div');
+        square.className = 'square ' + ((row + col) % 2 === 0 ? 'white' : 'black');
+        square.dataset.row = row;
+        square.dataset.col = col;
+
+        const piece = initialPosition[row][col];
+        if (piece) {
+          square.textContent = piece;
+        }
+
+        square.addEventListener('dragstart', (e) => {
+          draggedPiece = e.target.textContent;
+          sourceSquare = e.target;
+        });
+
+        square.addEventListener('dragover', (e) => e.preventDefault());
+
+        square.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (draggedPiece && sourceSquare !== e.target) {
+            sourceSquare.textContent = "";
+            e.target.textContent = draggedPiece;
+            draggedPiece = null;
+          }
+        });
+
+        square.setAttribute('draggable', true);
+        board.appendChild(square);
+      }
+    }
+  </script>
+</body>
+</html>
